@@ -1,4 +1,5 @@
 # Docker Compose Configs
+* Elasticsearch and Kibana docker containers with basic auth
 
 ## Set Environment
 1. Create a file `.env`
