@@ -1,0 +1,38 @@
+version: '3.6'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$STACK_VERSION
+    container_name: elasticsearch
+    environment:
+      discovery.type: 'single-node'
+      ELASTIC_PASSWORD: $ELK_PASS
+      cluster.name: 'es_cluster_01'
+      node.name: 'es01'
+      bootstrap.memory_lock: 'true'
+      ES_JAVA_OPTS: '-Xms2G -Xmx2G'
+      xpack.security.enabled: 'true'
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes: ['esdata:/usr/share/elasticsearch/data']
+    networks:
+      - elastic
+  kibana:
+    container_name: kibana
+    depends_on: [elasticsearch]
+    image: docker.elastic.co/kibana/kibana:$STACK_VERSION
+    environment:
+      - SERVERNAME=localhost
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=$ELK_PASS
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - elastic
+
+volumes:
+  esdata:
+networks:
+  elastic:
